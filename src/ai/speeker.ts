@@ -8,6 +8,7 @@ export interface PitchPoint {
 
 export interface Voice {
     name: string;
+    description?: string;
     locale: string;
     gender: Gender;
 }

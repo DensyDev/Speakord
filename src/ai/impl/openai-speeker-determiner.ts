@@ -1,54 +1,74 @@
 import OpenAI from 'openai';
-import { 
-    SpeekerDeterminer, 
+import {
+    SpeekerDeterminer,
     SpeekerDetermineTemperamentConfig,
-    SpeekerDetermineEmotionConfig, 
-    DeterminedTemperament, 
+    SpeekerDetermineEmotionConfig,
+    DeterminedTemperament,
     DeterminedEmotion,
 } from "..";
 
 export class OpenAISpeekerDeterminer implements SpeekerDeterminer {
     private client: OpenAI;
+    private model: string;
 
-    constructor(apiKey: string) {
+    constructor(apiKey: string, model: string) {
         this.client = new OpenAI({ apiKey });
+        this.model = model;
     }
 
     async determineTemperament(config: SpeekerDetermineTemperamentConfig): Promise<DeterminedTemperament> {
-        const systemPrompt = `
-            You are a professional voice director and psychologist. Your task is to analyze user messages and define a permanent "Voice Temperament".
+        const hasOverride = config.overridePrompt && config.overridePrompt !== "NONE" && config.overridePrompt.trim() !== "";
 
-            CORE CONCEPTS:
-            - pitchBias: [-1.0 to 1.0] Base frequency. -1.0 is a deep bass, 1.0 is high-pitched/tiny.
-            - rateBias: [-1.0 to 1.0] Speaking speed. -1.0 is very slow/sluggish, 1.0 is fast/energetic.
-            - energyBias: [-1.0 to 1.0] Vocal range and power. -1.0 is monotone/flat, 1.0 is highly dynamic/expressive.
+        const systemPrompt = `You are a robotic vocal profile architect.
+        
+        LOGIC CONSTRAINTS:
+        1. Look for 'ACTUAL_DIRECTIVE' in the user message.
+        2. IF 'ACTUAL_DIRECTIVE' is NOT "NONE":
+           - You MUST ignore 'MESSAGES_HISTORY' sentiment.
+           - You MUST select a voice and set biases (pitch, rate, energy) to PERFECTLY MATCH the 'ACTUAL_DIRECTIVE'.
+           - 'traits' array must contain characteristics from the 'ACTUAL_DIRECTIVE'.
+        3. IF 'ACTUAL_DIRECTIVE' is "NONE":
+           - Analyze 'MESSAGES_HISTORY' to define a matching permanent persona.
 
-            VOICE SELECTION RULES:
-            1. Choose the best matching voice from the provided list.
-            2. Respect 'overrideGender' if provided: ${config.overrideGender ?? 'Not specified'}.
-            3. Respect 'overridePrompt' if provided: "${config.overridePrompt ?? 'None'}".
+        TECHNICAL BIASES:
+        - pitchBias, rateBias, energyBias: [-1.0 to 1.0].
+        - age: child | youth | adult | senior.
 
-            AVAILABLE VOICES:
-            ${JSON.stringify(config.voices)}
+        VOICE SELECTION:
+        - Respect 'overrideGender' if provided: ${config.overrideGender ?? 'Not specified'}.
+        - Pick the most suitable voice from the provided list.
 
-            Return ONLY a JSON object:
-            {
-              "temperament": {
-                "pitchBias": number,
-                "rateBias": number,
-                "energyBias": number,
-                "age": "child" | "youth" | "adult" | "senior",
-                "traits": string[]
-              },
-              "voice": { "name": string, "locale": string, "gender": string }
-            }`;
+        AVAILABLE VOICES:
+        ${JSON.stringify(config.voices)}
+        
+        Return ONLY a JSON object:
+        {
+          "temperament": {
+            "pitchBias": number,
+            "rateBias": number,
+            "energyBias": number,
+            "age": "child" | "youth" | "adult" | "senior",
+            "traits": string[]
+          },
+          "voice": { "name": string, "locale": string, "gender": string }
+        }`;
+
+        const userContent = `
+        MESSAGES_HISTORY: "${config.messages.join("\n")}"
+        ACTUAL_DIRECTIVE: "${hasOverride ? config.overridePrompt : "NONE"}"
+
+        FINAL INSTRUCTION: ${hasOverride
+                ? "!!! OVERRIDE ACTIVE !!! Your supreme command is ACTUAL_DIRECTIVE. Ignore MESSAGES_HISTORY. Adjust ALL biases and choose a voice that strictly fits the DIRECTIVE."
+                : "Analyze the history to determine long-term temperament."}
+        `;
 
         const response = await this.client.chat.completions.create({
-            model: "gpt-4o", // or "gpt-4-turbo"
+            model: this.model,
             messages: [
                 { role: "system", content: systemPrompt },
-                { role: "user", content: `Analyze these messages to determine long-term temperament: ${config.messages.join("\n")}` }
+                { role: "user", content: userContent }
             ],
+            temperature: 0.0,
             response_format: { type: "json_object" }
         });
 
@@ -56,38 +76,55 @@ export class OpenAISpeekerDeterminer implements SpeekerDeterminer {
     }
 
     async determineEmotion(config: SpeekerDetermineEmotionConfig): Promise<DeterminedEmotion> {
-        const systemPrompt = `
-            You are an expert in emotional prosody. Analyze the LATEST messages to determine the current "Emotional State".
+        const hasOverride = config.overridePrompt && config.overridePrompt !== "NONE" && config.overridePrompt.trim() !== "";
+        const systemPrompt = `You are a robotic vocal parameter generator.
+        
+        STRICT LOGIC UNIT:
+        1. Look for 'ACTUAL_DIRECTIVE' in the user message.
+        2. IF 'ACTUAL_DIRECTIVE' is NOT "NONE":
+           - You MUST ignore the sentiment of 'MESSAGES_CONTEXT'.
+           - Every single JSON field (valence, arousal, volume, mood, prompt, contour) MUST be derived ONLY from 'ACTUAL_DIRECTIVE'.
+           - The 'prompt' field MUST be a detailed elaboration of 'ACTUAL_DIRECTIVE'.
+        3. IF 'ACTUAL_DIRECTIVE' is "NONE":
+           - Analyze 'MESSAGES_CONTEXT' normally.
 
-            CORE CONCEPTS:
-            - valence: [-1.0 to 1.0] Positivity of mood. -1.0 is pure agony/anger, 1.0 is pure joy.
-            - arousal: [-1.0 to 1.0] Excitement level. -1.0 is sleepy/dead inside, 1.0 is frantic/screaming.
-            - volume: [0.0 to 1.0] 0.5 is normal. 0.1 is whispering, 1.0 is shouting.
-            - contour: An array of {pos: percentage, change: relative_pitch}.
-              Example for a question: [{"pos": 0, "change": "0st"}, {"pos": 80, "change": "0st"}, {"pos": 100, "change": "+10st"}]
-              Example for sarcasm: [{"pos": 0, "change": "0st"}, {"pos": 50, "change": "+6st"}, {"pos": 100, "change": "-4st"}]
+        TECHNICAL SPECS:
+        - valence/arousal: [-1.0 to 1.0].
+        - volume: [0.0 to 1.0].
+        - contour: Array of {pos: %, change: string}. ALWAYS use +/- signs (e.g., "+0st").
+        - prompt: Natural language instruction for TTS.
+        
+        Return ONLY a JSON object:
+        {
+          "emotion": {
+            "valence": number,
+            "arousal": number,
+            "volume": number,
+            "mood": string,
+            "prompt": string,
+            "contour": [{ "pos": number, "change": string }]
+        }
+        `;
 
-            Return ONLY a JSON object:
-            {
-              "emotion": {
-                "valence": number,
-                "arousal": number,
-                "volume": number,
-                "mood": string,
-                "contour": [{ "pos": number, "change": string }]
-              }
-            }`;
+        const userContent = `
+        MESSAGES_CONTEXT: "${config.messages.join("\n")}"
+        ACTUAL_DIRECTIVE: "${hasOverride ? config.overridePrompt : "NONE"}"
+
+        FINAL INSTRUCTION: ${hasOverride
+                ? "!!! OVERRIDE ACTIVE !!! You MUST ignore MESSAGES_CONTEXT and generate parameters strictly for ACTUAL_DIRECTIVE. All parameters and the 'prompt' field must reflect the DIRECTIVE."
+                : "Analyze the emotion of MESSAGES_CONTEXT."}
+        `;
 
         const response = await this.client.chat.completions.create({
-            model: "gpt-4o",
+            model: this.model,
             messages: [
                 { role: "system", content: systemPrompt },
-                { role: "user", content: `Analyze the recent context for immediate emotion: ${config.messages.slice(-5).join("\n")}` }
+                { role: "user", content: userContent }
             ],
+            temperature: 0.0,
             response_format: { type: "json_object" }
         });
 
-        const result = JSON.parse(response.choices[0].message.content!);
-        return result as DeterminedEmotion;
+        return JSON.parse(response.choices[0].message.content!) as DeterminedEmotion;
     }
 }
