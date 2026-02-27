@@ -1,6 +1,6 @@
 import { ResultReason, SpeechConfig, SpeechSynthesisOutputFormat, SpeechSynthesizer } from "microsoft-cognitiveservices-speech-sdk";
 import { SpeechSynthesizer as ISpeechSynthesizer, PitchPoint, Speeker } from "..";
-import { sanitizeForSSML as sanitizeSSML } from "../../util/sanitize-ssml";
+import { sanitizeSSML } from "../../util";
 
 export class AzureSpeechSynthesizer implements ISpeechSynthesizer {
     private config: SpeechConfig;

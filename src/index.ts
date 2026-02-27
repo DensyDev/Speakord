@@ -2,36 +2,25 @@ import {
     Speeker, 
     AzureSpeechSynthesizer, 
     AzureVoiceResolver, 
-    OpenAISpeekerDeterminer 
+    OpenAISpeekerDeterminer, 
+    OpenAISpeechSynthesizer,
+    OpenAIVoiceResolver
 } from "./ai";
-import { detectLanguage } from "./util/language-detector";
+import { OPENAI_API_KEY, OPENAI_GPT_MODEL, OPENAI_TTS_MODEL } from "./api/constants";
+import { SpeechService } from "./service/speech-service";
 import fs from 'fs';
 import path from 'path';
 
 async function main() {
-    const text = "Text to speech";
+    const text = "";
 
-    const voiceResolver = new AzureVoiceResolver("", "eastus");
-    const voiceSynthesizer = new AzureSpeechSynthesizer("", "eastus");
-    const speekerDeterminer = new OpenAISpeekerDeterminer("");
+    const speechService = new SpeechService(
+        new OpenAISpeekerDeterminer(OPENAI_API_KEY, OPENAI_GPT_MODEL),
+        new OpenAISpeechSynthesizer(OPENAI_API_KEY, OPENAI_TTS_MODEL),
+        new OpenAIVoiceResolver()
+    );
 
-    const voices = await voiceResolver.resolve(detectLanguage(text));
-
-    const temperament = await speekerDeterminer.determineTemperament({
-        messages: [text],
-        voices: voices
-    });
-    const emotion = await speekerDeterminer.determineEmotion({
-        messages: [text]
-    });
-
-    const speeker: Speeker = {
-        temperament: temperament.temperament,
-        emotion: emotion.emotion,
-        voice: temperament.voice
-    };
-
-    const speech = await voiceSynthesizer.synthesize(text, speeker);
+    const speech = await speechService.speek("1", text, {});
 
     const filePath = path.join(__dirname, 'output.wav');
     fs.writeFileSync(filePath, speech);

@@ -11,7 +11,7 @@ export function escapeXml(unsafe: string): string {
     });
 }
 
-export function sanitizeForSSML(text: string): string {
+export function sanitizeSSML(text: string): string {
     let clean = text.replace(/[\r\n\t]+/g, ' ');
     clean = clean.replace(/[\x00-\x1F\x7F]/g, '');
     clean = escapeXml(clean);
