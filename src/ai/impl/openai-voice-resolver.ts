@@ -7,51 +7,19 @@ type OpenAIVoiceMeta = {
 };
 
 const OPENAI_VOICES: OpenAIVoiceMeta[] = [
-    {
-        name: "alloy",
-        gender: "neutral",
-        description: "Balanced and neutral voice. Suitable for most general-purpose narration."
-    },
-    {
-        name: "ash",
-        gender: "male",
-        description: "Warm and confident male voice with a natural delivery."
-    },
-    {
-        name: "coral",
-        gender: "female",
-        description: "Clear and professional female voice. Good for structured or business content."
-    },
-    {
-        name: "echo",
-        gender: "male",
-        description: "Deep and calm male voice with steady pacing."
-    },
-    {
-        name: "fable",
-        gender: "neutral",
-        description: "Expressive voice ideal for storytelling and character-driven narration."
-    },
-    {
-        name: "nova",
-        gender: "female",
-        description: "Bright and energetic female voice with dynamic tone."
-    },
-    {
-        name: "onyx",
-        gender: "male",
-        description: "Low-pitched, powerful male voice with authoritative presence."
-    },
-    {
-        name: "sage",
-        gender: "neutral",
-        description: "Soft and composed voice with a calm and reassuring tone."
-    },
-    {
-        name: "shimmer",
-        gender: "female",
-        description: "Light and smooth female voice with gentle articulation."
-    }
+    { name: 'alloy', gender: 'neutral', description: 'Balanced, natural voice with a clear tone.' },
+    { name: 'ash', gender: 'male', description: 'Calm male voice with steady cadence.' },
+    { name: 'ballad', gender: 'female', description: 'Warm female voice with smooth rhythm.' },
+    { name: 'coral', gender: 'female', description: 'Bright female voice with a friendly tone.' },
+    { name: 'echo', gender: 'male', description: 'Clear male voice with a modern sound.' },
+    { name: 'fable', gender: 'neutral', description: 'Soft narrative voice with a reflective tone.' },
+    { name: 'nova', gender: 'female', description: 'Confident female voice with crisp articulation.' },
+    { name: 'onyx', gender: 'male', description: 'Deep male voice with a resonant presence.' },
+    { name: 'sage', gender: 'neutral', description: 'Measured voice with a thoughtful tone.' },
+    { name: 'shimmer', gender: 'female', description: 'Light female voice with a polished sound.' },
+    { name: 'verse', gender: 'neutral', description: 'Even, adaptable voice with balanced dynamics.' },
+    { name: 'marin', gender: 'female', description: 'Soft female voice with natural pacing.' },
+    { name: 'cedar', gender: 'male', description: 'Warm male voice with a steady tone.' }
 ];
 
 export class OpenAIVoiceResolver implements VoiceResolver {
