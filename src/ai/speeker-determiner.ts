@@ -19,7 +19,6 @@ export interface DeterminedTemperament {
 
 export interface DeterminedEmotion {
     emotion: Emotion;
-    voice: Voice;
 }
 
 export interface SpeekerDeterminer {

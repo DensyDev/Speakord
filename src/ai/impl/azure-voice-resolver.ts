@@ -15,6 +15,8 @@ export class AzureVoiceResolver implements VoiceResolver {
         const voices: Voice[] = [];
 
         const result = await this.synthesizer.getVoicesAsync();
+        console.log(result.voices);
+        
 
         for (const voice of result.voices) {
             if (voice.locale.startsWith(locale)) {

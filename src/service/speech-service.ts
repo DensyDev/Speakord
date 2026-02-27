@@ -18,7 +18,12 @@ export class SpeechService {
         private voiceResolver: VoiceResolver
     ) {}
 
-    async speek(sessionId: string, text: string, overrides?: { gender?: any, prompt?: string }): Promise<Buffer> {
+    async speek(
+        sessionId: string, 
+        text: string, 
+        history?: { temperament?: string[], emotion?: string[] }, 
+        overrides?: { gender?: any, prompt?: string }
+    ): Promise<Buffer> {
         const lang = detectLanguage(text);
 
         let voices = this.voicesCache.get(lang);
@@ -30,7 +35,7 @@ export class SpeechService {
         let detTemp = this.sessionCache.get(sessionId);
         if (!detTemp) {
             detTemp = await this.speekerDeterminer.determineTemperament({
-                messages: [text],
+                messages: history?.temperament || [text],
                 voices: voices,
                 overrideGender: overrides?.gender,
                 overridePrompt: overrides?.prompt
@@ -39,7 +44,7 @@ export class SpeechService {
         }
 
         const detEmotion = await this.speekerDeterminer.determineEmotion({
-            messages: [text],
+            messages: history?.emotion || [text],
             overridePrompt: overrides?.prompt
         });
 
@@ -50,5 +55,14 @@ export class SpeechService {
         };
 
         return await this.speechSynthesizer.synthesize(text, speeker);
+    }
+
+    resetSession(sessionId: string) {
+        this.sessionCache.delete(sessionId);
+    }
+
+    clearAllCaches() {
+        this.voicesCache.clear();
+        this.sessionCache.clear();
     }
 }
