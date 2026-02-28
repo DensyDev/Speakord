@@ -5,10 +5,10 @@ export class PlaybackService {
     private players = new Map<string, IAudioPlayer>();
     private isProcessing = new Map<string, boolean>();
 
-    constructor(private queueManager: IPlayerQueue) {}
+    constructor(public playerQueue: IPlayerQueue) {}
 
     async addAndPlay(sessionId: string, connection: VoiceConnection, track: PlayableTrack) {
-        this.queueManager.enqueue(sessionId, track);
+        this.playerQueue.enqueue(sessionId, track);
         
         if (!this.players.has(sessionId)) {
             this.players.set(sessionId, new DiscordAudioPlayer(connection));
@@ -19,11 +19,22 @@ export class PlaybackService {
         }
     }
 
+    async skipPlayback(sessionId: string) {
+        let player = this.players.get(sessionId);
+        if (!player) return;
+
+        if (player.isPlaying) {
+            player.stop();
+        }
+
+        await this.processQueue(sessionId);
+    }
+
     private async processQueue(sessionId: string): Promise<void> {
         const player = this.players.get(sessionId);
         if (!player) return;
 
-        const nextTrack = this.queueManager.next(sessionId);
+        const nextTrack = this.playerQueue.next(sessionId);
 
         if (!nextTrack) {
             this.isProcessing.set(sessionId, false);
@@ -45,7 +56,7 @@ export class PlaybackService {
         const player = this.players.get(sessionId);
         player?.stop();
         this.players.delete(sessionId);
-        this.queueManager.clear(sessionId);
+        this.playerQueue.clear(sessionId);
         this.isProcessing.set(sessionId, false);
     }
 }

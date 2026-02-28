@@ -1,4 +1,4 @@
-import { ApplicationCommandManager, Client, Collection, GatewayIntentBits, SlashCommandBuilder } from 'discord.js';
+import { Client, Events, GatewayIntentBits } from 'discord.js';
 import { 
     OpenAISpeekerDeterminer, 
     OpenAISpeechSynthesizer, 
@@ -31,13 +31,11 @@ export const speechService = new SpeechService(
 
 export const playbackService = new PlaybackService(new MemoryPlayerQueue());
 
-// require("./events")
-
-
 async function main() {
     await bot.login(BOT_TOKEN);
-
+    
     await setupCommands();
+    console.log('All commands registered');
 }
 
 main();

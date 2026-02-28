@@ -36,23 +36,32 @@ function scanDir(dir: string): string[] {
 export async function setupCommands() {
     const commandFiles = scanDir(__dirname);
 
+    const commands: ApplicationCommandDataResolvable[] = [];
+
     for (const filePath of commandFiles) {
         const command = require(filePath) as Command;
 
         if ("command" in command && "execute" in command) {
-            await bot.application?.commands.create(command.command);
+            if (!bot.application) throw new Error("Application not ready");
+
+            commands.push(command.command);
             executors.set(command.command.name, command.execute);
         } else {
-            console.log(`Command at ${filePath} is missing required properties (command and execute)`);
+            console.log(`Command at ${filePath} is missing required properties (command or execute)`);
         }
     }
+
+    if (!bot.application) {
+        throw new Error("Application not ready");
+    }
+    await bot.application?.commands.set(commands);
 
     setupCommandHandler();
 }
 
 function setupCommandHandler() {
     bot.on(Events.InteractionCreate, async (interaction) => {
-        if (!interaction.isChatInputCommand()) return;
+        if (!interaction.isChatInputCommand() && !interaction.isContextMenuCommand()) return;
 
         const executor = executors.get(interaction.commandName);
         if (!executor) {
