@@ -13,6 +13,7 @@ import {
     OPENAI_TTS_MODEL 
 } from './api/constants';
 import { setupCommands } from './command';
+import { setupEvents } from './events';
 
 export const bot = new Client({
     intents: [
@@ -36,6 +37,9 @@ async function main() {
     
     await setupCommands();
     console.log('All commands registered');
+
+    await setupEvents();
+    console.log('All events registered');
 }
 
 main();

@@ -1,7 +1,6 @@
 import { ApplicationCommandDataResolvable, CommandInteraction, Events } from "discord.js";
 import { bot } from "..";
-import path from "path";
-import fs from "fs";
+import { findTSFiles } from "../util";
 
 type CommandName = { name: string };
 type Command = {
@@ -11,30 +10,10 @@ type Command = {
 
 const executors = new Map<string, Function>();
 
-function scanDir(dir: string): string[] {
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-    return entries.flatMap((entry) => {
-        const fullPath = path.join(dir, entry.name);
-
-        if (entry.isDirectory()) {
-            return scanDir(fullPath);
-        }
-
-        if (
-            entry.isFile() &&
-            fullPath.endsWith(".ts") &&
-            fullPath !== __filename
-        ) {
-            return [fullPath];
-        }
-
-        return [];
-    });
-}
-
 export async function setupCommands() {
-    const commandFiles = scanDir(__dirname);
+    const commandFiles = findTSFiles(__dirname, (entry, fullPath) => entry.isFile() &&
+            fullPath.endsWith(".ts") &&
+            fullPath !== __filename);
 
     const commands: ApplicationCommandDataResolvable[] = [];
 
@@ -47,7 +26,7 @@ export async function setupCommands() {
             commands.push(command.command);
             executors.set(command.command.name, command.execute);
         } else {
-            console.log(`Command at ${filePath} is missing required properties (command or execute)`);
+            console.warn(`Command at ${filePath} is missing required properties (command or execute)`);
         }
     }
 

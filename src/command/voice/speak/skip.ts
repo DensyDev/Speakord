@@ -1,11 +1,11 @@
-import { entersState, getVoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
+import { getVoiceConnection } from "@discordjs/voice";
 import {
     ChatInputCommandInteraction,
     SlashCommandBuilder,
     MessageFlags,
     GuildMember,
 } from "discord.js";
-import { playbackService } from "../..";
+import { playbackService } from "../../..";
 
 export const command = new SlashCommandBuilder()
     .setName("skip")
