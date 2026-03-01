@@ -6,6 +6,7 @@ import {
     GuildMember,
 } from "discord.js";
 import { playbackService } from "../../..";
+import { t } from "../../../locale";
 
 export const command = new SlashCommandBuilder()
     .setName("stop")
@@ -14,15 +15,15 @@ export const command = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
     const member = interaction.member;
     if (!(member instanceof GuildMember)) {
-        return interaction.reply({ content: "This command can only be used on the server.", flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: t('command.speak.only.in.guild', interaction.locale), flags: MessageFlags.Ephemeral });
     }
 
     const connection = getVoiceConnection(interaction.guild!.id);
     if (!connection) {
-        return interaction.reply({ content: "Speakord is not connected to the voice channel.", flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: t('command.speak.not.in.voice', interaction.locale), flags: MessageFlags.Ephemeral });
     }
 
     playbackService.stopAndClear(interaction.guildId!);
     connection.destroy();
-    await interaction.reply({ content: "All playback has been stopped", flags: MessageFlags.Ephemeral });
+    await interaction.reply({ content: t('command.speak.all.playback.stopped', interaction.locale), flags: MessageFlags.Ephemeral });
 }

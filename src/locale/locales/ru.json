@@ -1,0 +1,15 @@
+{
+  "command.speak.only.in.guild": "Эту команду можно использовать только на сервере.",
+  "command.speak.join.voice": "Сначала войдите в голосовой канал.",
+  "command.speak.not.in.voice": "Speakord не подключен к голосовому каналу.",
+  "command.speak.all.playback.stopped": "Воспроизведение полностью остановлено.",
+  "command.speak.queue.skipped": "Текущее воспроизведение пропущено.",
+  "command.speak.queue.stoped": "Текущее воспроизведение остановлено.",
+  "command.speak.queue.empty": "Очередь пуста.",
+  "command.speak.playback.playing": "Воспроизведение сообщения...",
+  "command.speak.playback.played": "Cообщение было воспроизведено.",
+  "command.speak.playback.skip.button": "Пропустить",
+  "command.speak.playback.skip.not.your": "Это взаимодействие не для вас.",
+  "command.speak.playback.skip.skipped": "Ваше сообщение пропущено.",
+  "command.speak.playback.error": "Внутренняя ошибка при воспроизведении."
+}

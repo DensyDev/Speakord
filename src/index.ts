@@ -14,6 +14,7 @@ import {
 } from './api/constants';
 import { setupCommands } from './command';
 import { setupEvents } from './events';
+import { i18n, setupI18n } from './locale';
 
 export const bot = new Client({
     intents: [
@@ -40,6 +41,9 @@ async function main() {
 
     await setupEvents();
     console.log('All events registered');
+
+    await setupI18n();
+    console.log('All locales loaded');
 }
 
 main();

@@ -6,6 +6,7 @@ import {
     ApplicationCommandType
 } from "discord.js";
 import { playback } from "./util/playback";
+import { t } from "../../../locale";
 
 export const command = new ContextMenuCommandBuilder()
     .setName("Speak this message")
@@ -17,12 +18,12 @@ export async function execute(interaction: MessageContextMenuCommandInteraction)
 
     const member = interaction.member;
     if (!(member instanceof GuildMember)) {
-        return interaction.reply({ content: "This command can only be used on the server.", flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: t('command.speak.only.in.guild', interaction.locale), flags: MessageFlags.Ephemeral });
     }
 
     const voiceChannel = member?.voice.channel;
     if (!voiceChannel) {
-        return interaction.reply({ content: "First, join the voice channel.", flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: t('command.speak.join.voice', interaction.locale), flags: MessageFlags.Ephemeral });
     }
 
     await playback(text, interaction, voiceChannel);

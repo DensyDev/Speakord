@@ -12,6 +12,7 @@ import {
 } from "discord.js";
 import { playbackService, speechService } from "../../../..";
 import { fetchUserHistory as fetchDiscordUserHistory, truncateString } from "../../../../util";
+import { t } from "../../../../locale";
 
 export const playbackDeferReplies = new Map<string, InteractionResponse>();
 
@@ -24,7 +25,7 @@ export async function playback(text: string, interaction: CommandInteraction, vo
 
     const disabledRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
         new ButtonBuilder()
-            .setLabel("Skip")
+            .setLabel(t('command.speak.playback.skip.button', interaction.locale))
             .setCustomId("skip_playback")
             .setStyle(ButtonStyle.Primary)
             .setDisabled(true)
@@ -48,11 +49,11 @@ export async function playback(text: string, interaction: CommandInteraction, vo
         });
 
         const skip = await defer.edit({
-            content: "Playing your message...",
+            content: t('command.speak.playback.playing', interaction.locale),
             components: [
                 new ActionRowBuilder<ButtonBuilder>().addComponents(
                     new ButtonBuilder()
-                        .setLabel("Skip")
+                        .setLabel(t('command.speak.playback.skip.button', interaction.locale))
                         .setCustomId("skip_playback")
                         .setStyle(ButtonStyle.Primary)
                         .setEmoji({ name: "⏭️" })
@@ -68,17 +69,17 @@ export async function playback(text: string, interaction: CommandInteraction, vo
             try {
                 await button.deferUpdate().catch(() => { });
                 if (button.member?.user.id != interaction.user.id) {
-                    return button.reply({ content: `This interaction is not for you`, ephemeral: true })
+                    return button.reply({ content: t('command.speak.playback.skip.not.your', interaction.locale), ephemeral: true })
                 }
                 if (button.customId === "skip_playback") {
                     skipped = true;
                     playbackService.skipPlayback(guildId);
 
-                    await defer.edit({ content: "Your message has skipped", components: [disabledRow] });
+                    await defer.edit({ content: t('command.speak.playback.skip.skipped', interaction.locale), components: [disabledRow] });
                     await button.followUp({
                         content: playbackService.playerQueue.empty(guildId) ?
-                            "Current playback stopped" :
-                            "Current playback skipped",
+                            t('command.speak.queue.stoped', interaction.locale) :
+                            t('command.speak.queue.skipped', interaction.locale),
                         flags: MessageFlags.Ephemeral
                     }).catch(() => { });
                 }
@@ -92,13 +93,13 @@ export async function playback(text: string, interaction: CommandInteraction, vo
                 if (skipped) {
                     return;
                 }
-                await defer.edit({ content: "Your message played back", components: [disabledRow] }).catch(() => { });
+                await defer.edit({ content: t('command.speak.playback.played', interaction.locale), components: [disabledRow] }).catch(() => { });
             }
         });
 
     } catch (error) {
         console.error("Error while TTS/Playback:", error);
-        await defer.edit({ content: "Internal error while playback", components: [] }).catch(() => { });
+        await defer.edit({ content: t('command.speak.playback.error', interaction.locale), components: [] }).catch(() => { });
     } finally {
         playbackDeferReplies.delete(guildId);
     }
