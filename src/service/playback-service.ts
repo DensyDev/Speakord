@@ -1,5 +1,5 @@
 import { VoiceConnection } from "@discordjs/voice";
-import { DiscordAudioPlayer, IAudioPlayer, IPlayerQueue, PlayableTrack } from "../player";
+import { DiscordAudioPlayer, IAudioListener, IAudioPlayer, IPlayerQueue, PlayableTrack } from "../player";
 
 export class PlaybackService {
     private players = new Map<string, IAudioPlayer>();
@@ -7,7 +7,7 @@ export class PlaybackService {
 
     constructor(public playerQueue: IPlayerQueue) {}
 
-    async addAndPlay(sessionId: string, connection: VoiceConnection, track: PlayableTrack) {
+    async addAndPlay(sessionId: string, connection: VoiceConnection, track: PlayableTrack, listener?: IAudioListener) {
         this.playerQueue.enqueue(sessionId, track);
         
         if (!this.players.has(sessionId)) {
@@ -15,11 +15,11 @@ export class PlaybackService {
         }
 
         if (!this.isProcessing.get(sessionId)) {
-            await this.processQueue(sessionId);
+            await this.processQueue(sessionId, listener);
         }
     }
 
-    async skipPlayback(sessionId: string) {
+    async skipPlayback(sessionId: string, listener?: IAudioListener) {
         let player = this.players.get(sessionId);
         if (!player) return;
 
@@ -27,10 +27,10 @@ export class PlaybackService {
             player.stop();
         }
 
-        await this.processQueue(sessionId);
+        await this.processQueue(sessionId, listener);
     }
 
-    private async processQueue(sessionId: string): Promise<void> {
+    private async processQueue(sessionId: string, listener?: IAudioListener): Promise<void> {
         const player = this.players.get(sessionId);
         if (!player) return;
 
@@ -44,7 +44,7 @@ export class PlaybackService {
         this.isProcessing.set(sessionId, true);
 
         try {
-            await player.play(nextTrack);
+            await player.play(nextTrack, listener);
         } catch (error) {
             console.error(`Error playing track in guild ${sessionId}:`, error);
         }

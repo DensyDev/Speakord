@@ -1,7 +1,7 @@
 import { Events, VoiceState } from "discord.js";
 import { getVoiceConnection } from '@discordjs/voice';
 import { bot } from "../..";
-import { playbackDeferReplies } from "../../command/voice/speak/util/speak-utils";
+import { playbackDeferReplies } from "../../command/voice/speak/util/playback";
 
 export const name = Events.VoiceStateUpdate;
 

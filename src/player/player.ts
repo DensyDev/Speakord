@@ -2,8 +2,13 @@ export interface PlayableTrack {
     buffer: Buffer;
 }
 
+export interface IAudioListener {
+    onPlay?: () => any;
+    onStop?: () => any;
+}
+
 export interface IAudioPlayer {
-    play(track: PlayableTrack): Promise<void>;
+    play(track: PlayableTrack, listener?: IAudioListener): Promise<void>;
     stop(): void;
     pause(): void;
     resume(): void;

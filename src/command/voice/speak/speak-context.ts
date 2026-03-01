@@ -5,7 +5,7 @@ import {
     MessageContextMenuCommandInteraction,
     ApplicationCommandType
 } from "discord.js";
-import { playback } from "./util/speak-utils";
+import { playback } from "./util/playback";
 
 export const command = new ContextMenuCommandBuilder()
     .setName("Speak this message")

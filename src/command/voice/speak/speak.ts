@@ -3,8 +3,9 @@ import {
     SlashCommandBuilder, 
     SlashCommandStringOption, 
     MessageFlags, 
-    GuildMember} from "discord.js";
-import { playback } from "./util/speak-utils";
+    GuildMember
+} from "discord.js";
+import { playback } from "./util/playback";
 
 export const command = new SlashCommandBuilder()
     .setName("speak")
