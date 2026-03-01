@@ -6,10 +6,11 @@ import {
     ApplicationCommandType
 } from "discord.js";
 import { playback } from "./util/playback";
-import { t } from "../../../locale";
+import { createLocalizationMap, t } from "../../../locale";
 
 export const command = new ContextMenuCommandBuilder()
     .setName("Speak this message")
+    .setNameLocalizations(createLocalizationMap('command.description.speak.context'))
     .setType(ApplicationCommandType.Message);
 
 export async function execute(interaction: MessageContextMenuCommandInteraction) {

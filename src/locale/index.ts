@@ -3,6 +3,11 @@ import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
 import path from 'path';
 
+export * from "./util"
+
+/**
+ * Setup i18n.
+ */
 export async function setupI18n() {
     const localesDir = path.join(__dirname, './locales');
     const availableLangs = fs.readdirSync(localesDir)
@@ -22,6 +27,14 @@ export async function setupI18n() {
     });
 }
 
+/**
+ * Localizes the message.
+ * 
+ * @param key localization key 
+ * @param lang locale
+ * @param variables localization variables
+ * @returns localized message
+ */
 export const t = (key: string, lang: string, variables: object = {}) => {
     return i18n.t(key, { 
         lng: lang,
@@ -29,5 +42,7 @@ export const t = (key: string, lang: string, variables: object = {}) => {
     });
 };
 
-
+/**
+ * The i18n instance.
+ */
 export const i18n = i18next;

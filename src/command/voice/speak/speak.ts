@@ -6,14 +6,16 @@ import {
     GuildMember
 } from "discord.js";
 import { playback } from "./util/playback";
-import { t } from "../../../locale";
+import { createLocalizationMap, t } from "../../../locale";
 
 export const command = new SlashCommandBuilder()
     .setName("speak")
     .setDescription("Speak to the voice")
+    .setDescriptionLocalizations(createLocalizationMap('command.description.speak'))
 	.addStringOption(new SlashCommandStringOption()
         .setName('text')
-        .setDescription('Type your text'));
+        .setDescription('Type your text')
+        .setDescriptionLocalizations(createLocalizationMap('command.description.speak.option.text')));
 
 export async function execute(interaction: ChatInputCommandInteraction) {
     const text = interaction.options.getString('text');

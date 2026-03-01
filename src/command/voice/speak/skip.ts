@@ -6,11 +6,12 @@ import {
     GuildMember,
 } from "discord.js";
 import { playbackService } from "../../..";
-import { t } from "../../../locale";
+import { createLocalizationMap, t } from "../../../locale";
 
 export const command = new SlashCommandBuilder()
     .setName("skip")
-    .setDescription("Skip current message");
+    .setDescription("Skip current message")
+    .setDescriptionLocalizations(createLocalizationMap('command.description.skip'));
 
 export async function execute(interaction: ChatInputCommandInteraction) {
     const member = interaction.member;

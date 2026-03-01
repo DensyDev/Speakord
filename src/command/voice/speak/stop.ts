@@ -6,11 +6,12 @@ import {
     GuildMember,
 } from "discord.js";
 import { playbackService } from "../../..";
-import { t } from "../../../locale";
+import { createLocalizationMap, t } from "../../../locale";
 
 export const command = new SlashCommandBuilder()
     .setName("stop")
-    .setDescription("Stop all playback");
+    .setDescription("Stop all playback")
+    .setDescriptionLocalizations(createLocalizationMap('command.description.stop'));
 
 export async function execute(interaction: ChatInputCommandInteraction) {
     const member = interaction.member;

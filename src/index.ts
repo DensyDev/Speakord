@@ -1,4 +1,4 @@
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits } from 'discord.js';
 import { 
     OpenAISpeekerDeterminer, 
     OpenAISpeechSynthesizer, 
@@ -14,7 +14,7 @@ import {
 } from './api/constants';
 import { setupCommands } from './command';
 import { setupEvents } from './events';
-import { i18n, setupI18n } from './locale';
+import { setupI18n } from './locale';
 
 export const bot = new Client({
     intents: [

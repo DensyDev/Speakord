@@ -1,4 +1,15 @@
 {
+  "command.description.skip": "Skip current message",
+  "command.description.speak": "Speak to the voice",
+  "command.description.speak.option.text": "Type your text",
+  "command.description.speak.context": "Speak this message",
+  "command.description.stop": "Stop all playback",
+  "command.description.gender": "Change voice gender",
+  "command.description.gender.option.gender": "Select voice gender",
+  "command.description.gender.option.gender.male": "Male",
+  "command.description.gender.option.gender.female": "Female",
+  "command.description.gender.option.gender.neutral": "Neutral",
+  "command.description.gender.option.gender.unknown": "Disable",
   "command.speak.only.in.guild": "This command can only be used on the server.",
   "command.speak.join.voice": "First, join the voice channel.",
   "command.speak.not.in.voice": "Speakord is not connected to the voice channel.",
@@ -11,5 +22,7 @@
   "command.speak.playback.skip.button": "Skip",
   "command.speak.playback.skip.not.your": "This interaction is not for you.",
   "command.speak.playback.skip.skipped": "Your message has skipped.",
-  "command.speak.playback.error": "Internal error while playback."
+  "command.speak.playback.error": "Internal error while playback.",
+  "command.gender.voice.changed": "Voice gender changed to {{gender}}",
+  "command.gender.voice.reset": "Voice gender reset to auto-select"
 }
