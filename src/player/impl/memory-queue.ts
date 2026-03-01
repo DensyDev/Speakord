@@ -33,4 +33,8 @@ export class MemoryPlayerQueue implements IPlayerQueue {
     size(sessionId: string): number {
         return this.queues.get(sessionId)?.length || 0;
     }
+
+    empty(sessionId: string): boolean {
+        return this.size(sessionId) === 0;
+    }
 }

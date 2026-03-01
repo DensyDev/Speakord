@@ -1,4 +1,4 @@
-import { IAudioPlayer, PlayableTrack } from "..";
+import { IAudioListener, IAudioPlayer, PlayableTrack } from "..";
 import { 
     createAudioPlayer, 
     createAudioResource, 
@@ -25,7 +25,7 @@ export class DiscordAudioPlayer implements IAudioPlayer {
         });
     }
 
-    async play(track: PlayableTrack): Promise<void> {
+    async play(track: PlayableTrack, listener?: IAudioListener): Promise<void> {
         return new Promise((resolve, reject) => {
             const resource = createAudioResource(Readable.from(track.buffer));
             
@@ -36,13 +36,23 @@ export class DiscordAudioPlayer implements IAudioPlayer {
                 if (newState.status === AudioPlayerStatus.Idle) {
                     this.player.removeListener('stateChange', onStateChange);
                     this.isPlaying = false;
+                    if (listener?.onStop) {
+                        listener.onStop();
+                    }
                     resolve();
+                } else {
+                    if (listener?.onPlay) {
+                        listener.onPlay();
+                    }
                 }
             };
 
             const onError = (error: Error) => {
                 this.player.removeListener('error', onError);
                 this.isPlaying = false;
+                if (listener?.onStop) {
+                    listener.onStop();
+                }
                 reject(error);
             };
 

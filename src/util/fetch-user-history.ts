@@ -3,7 +3,7 @@ import { Guild, TextChannel, Message, Collection } from 'discord.js';
 /**
  * Collects the user's latest messages from the entire server.
  */
-export async function getGlobalUserHistory(
+export async function fetchUserHistory(
     guild: Guild, 
     userId: string, 
     limit: number = 20
