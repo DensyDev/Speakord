@@ -1,0 +1,27 @@
+// Data source
+datasource db {
+  provider = "postgresql"
+}
+
+// Generator
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated"
+}
+
+model UserSettings {
+  id        Int      @id @default(autoincrement())
+  guildId   String
+  userId    String
+  gender    String
+  updatedAt DateTime @updatedAt
+
+  @@unique([guildId, userId])
+}
+
+model GuildSettings {
+  id        Int      @id @default(autoincrement())
+  guildId   String   @unique
+  prompt    String
+  updatedAt DateTime @updatedAt
+}

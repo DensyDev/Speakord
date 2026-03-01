@@ -10,7 +10,7 @@ import {
     MessageFlags,
     VoiceBasedChannel
 } from "discord.js";
-import { playbackService, speechService } from "../../../..";
+import { playbackService, settingsService, speechService } from "../../../..";
 import { fetchUserHistory as fetchDiscordUserHistory, truncateString } from "../../../../util";
 import { t } from "../../../../locale";
 
@@ -46,6 +46,9 @@ export async function playback(text: string, interaction: CommandInteraction, vo
         const audioBuffer = await speechService.speek(guildId, text, {
             temperament: history,
             emotion: history.slice(0, 5)
+        }, {
+            gender: await settingsService.getUserGender(guildId, interaction.user.id),
+            prompt: await settingsService.getGuildPrompt(guildId)
         });
 
         const skip = await defer.edit({

@@ -15,6 +15,7 @@ import {
 import { setupCommands } from './command';
 import { setupEvents } from './events';
 import { setupI18n } from './locale';
+import { SettingsService } from './service/settings-service';
 
 export const bot = new Client({
     intents: [
@@ -33,6 +34,8 @@ export const speechService = new SpeechService(
 
 export const playbackService = new PlaybackService(new MemoryPlayerQueue());
 
+export const settingsService = new SettingsService();
+
 async function main() {
     await bot.login(BOT_TOKEN);
     
@@ -43,7 +46,7 @@ async function main() {
     console.log('All events registered');
 
     await setupI18n();
-    console.log('All locales loaded');
+    console.log('All locales loaded'); 
 }
 
 main();

@@ -3,6 +3,7 @@ node_modules
 /dist
 /sessions/
 /storage/
+generated
 
 # Local env files
 .env.local

@@ -5,6 +5,7 @@ import {
     MessageFlags 
 } from "discord.js";
 import { createLocalizationMap, t } from "../../locale";
+import { settingsService } from "../..";
 
 export const command = new SlashCommandBuilder()
     .setName("gender")
@@ -23,13 +24,26 @@ export const command = new SlashCommandBuilder()
 
 export async function execute(interaction: ChatInputCommandInteraction) {
     const gender = interaction.options.getString('gender');
-    if (!gender) return;
+    const guildId = interaction.guildId;
+    const userId = interaction.user.id;
+
+    if (!gender || !guildId) return;
 
     if (gender !== "unknown") {
-        interaction.reply({ content: t('command.gender.voice.changed', interaction.locale, {
-            gender: t(`command.description.gender.option.gender.${gender}`, interaction.locale)
-        }), flags: MessageFlags.Ephemeral })
+        await settingsService.setUserGender(guildId, userId, gender);
+        
+        await interaction.reply({ 
+            content: t('command.gender.voice.changed', interaction.locale, {
+                gender: t(`command.description.gender.option.gender.${gender}`, interaction.locale)
+            }), 
+            flags: MessageFlags.Ephemeral 
+        });
     } else {
-        interaction.reply({ content: t('command.gender.voice.reset', interaction.locale), flags: MessageFlags.Ephemeral })
+        await settingsService.resetUserGender(guildId, userId);
+        
+        await interaction.reply({ 
+            content: t('command.gender.voice.reset', interaction.locale), 
+            flags: MessageFlags.Ephemeral 
+        });
     }
 }

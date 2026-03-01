@@ -4,6 +4,7 @@ import {
     SlashCommandBuilder,
     MessageFlags,
     GuildMember,
+    PermissionFlagsBits,
 } from "discord.js";
 import { playbackService } from "../../..";
 import { createLocalizationMap, t } from "../../../locale";
@@ -11,7 +12,8 @@ import { createLocalizationMap, t } from "../../../locale";
 export const command = new SlashCommandBuilder()
     .setName("stop")
     .setDescription("Stop all playback")
-    .setDescriptionLocalizations(createLocalizationMap('command.description.stop'));
+    .setDescriptionLocalizations(createLocalizationMap('command.description.stop'))
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages);
 
 export async function execute(interaction: ChatInputCommandInteraction) {
     const member = interaction.member;

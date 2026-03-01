@@ -10,6 +10,10 @@
   "command.description.gender.option.gender.female": "Female",
   "command.description.gender.option.gender.neutral": "Neutral",
   "command.description.gender.option.gender.unknown": "Disable",
+  "command.description.prompt": "Change custom voice prompt",
+  "command.description.prompt.subcommand.set": "Set custom prompt",
+  "command.description.prompt.subcommand.reset": "Reset custom prompt",
+  "command.description.prompt.option.prompt": "Type voice prompt",
   "command.speak.only.in.guild": "This command can only be used on the server.",
   "command.speak.join.voice": "First, join the voice channel.",
   "command.speak.not.in.voice": "Speakord is not connected to the voice channel.",
@@ -24,5 +28,7 @@
   "command.speak.playback.skip.skipped": "Your message has skipped.",
   "command.speak.playback.error": "Internal error while playback.",
   "command.gender.voice.changed": "Voice gender changed to {{gender}}",
-  "command.gender.voice.reset": "Voice gender reset to auto-select"
+  "command.gender.voice.reset": "Voice gender reset to auto-select",
+  "command.prompt.voice.changed": "Custom prompt set to: {{prompt}}.",
+  "command.prompt.voice.reset": "Custom prompt reset."
 }
