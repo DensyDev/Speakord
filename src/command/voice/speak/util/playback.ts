@@ -6,6 +6,7 @@ import {
     ButtonStyle,
     CommandInteraction,
     ComponentType,
+    Guild,
     InteractionResponse,
     MessageFlags,
     VoiceBasedChannel
@@ -16,7 +17,7 @@ import { t } from "../../../../locale";
 
 export const playbackDeferReplies = new Map<string, InteractionResponse>();
 
-export async function playback(text: string, interaction: CommandInteraction, voiceChannel: VoiceBasedChannel) {
+export async function playback(text: string, historyUserId: string, interaction: CommandInteraction, voiceChannel: VoiceBasedChannel) {
     const guildId = interaction.guildId;
     if (!guildId) return;
 
@@ -42,7 +43,7 @@ export async function playback(text: string, interaction: CommandInteraction, vo
         await entersState(connection, VoiceConnectionStatus.Ready, 20_000);
 
 
-        const history = await fetchUserHistory(interaction, 100, 1000);
+        const history = await fetchUserHistory(interaction.guild!, historyUserId, 100, 1000);
         const audioBuffer = await speechService.speek(guildId, text, {
             temperament: history,
             emotion: history.slice(0, 5)
@@ -108,7 +109,7 @@ export async function playback(text: string, interaction: CommandInteraction, vo
     }
 }
 
-async function fetchUserHistory(interaction: CommandInteraction, messageLimit: number, lengthLimit: number) {
-    const history = await fetchDiscordUserHistory(interaction.guild!, interaction.member?.user.id!, messageLimit);
+async function fetchUserHistory(guild: Guild, userId: string, messageLimit: number, lengthLimit: number) {
+    const history = await fetchDiscordUserHistory(guild, userId, messageLimit);
     return history.map(m => truncateString(m, lengthLimit));
 }

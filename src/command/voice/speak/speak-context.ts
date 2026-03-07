@@ -27,5 +27,5 @@ export async function execute(interaction: MessageContextMenuCommandInteraction)
         return interaction.reply({ content: t('command.speak.join.voice', interaction.locale), flags: MessageFlags.Ephemeral });
     }
 
-    await playback(text, interaction, voiceChannel);
+    await playback(text, interaction.targetMessage.member?.id!, interaction, voiceChannel);
 }

@@ -31,5 +31,5 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         return interaction.reply({ content: t('command.speak.join.voice', interaction.locale), flags: MessageFlags.Ephemeral });
     }
 
-    await playback(text, interaction, voiceChannel);
+    await playback(text, interaction.member?.user.id!, interaction, voiceChannel);
 }
